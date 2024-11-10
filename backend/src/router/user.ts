@@ -12,16 +12,19 @@ const router = Router();
 router.post("/signup", async (req: Request, res: Response) => {
   const body = req.body;
   const parsedData = SignupSchema.safeParse(body);
+  console.log(parsedData);
+  
 
   if (!parsedData.success) {
     return res.status(411).json({
       message: "Incorrect inputs. Please check again.",
+      details: parsedData.error.errors 
     });
   }
 
   const userExists = await prismaClient.user.findFirst({
     where: {
-      email: parsedData.data.username,
+      email: parsedData.data.email,
     },
   });
 
@@ -34,7 +37,7 @@ router.post("/signup", async (req: Request, res: Response) => {
   await prismaClient.user.create({
     data: {
       fullname:parsedData.data.fullname,
-      email: parsedData.data.username,
+      email: parsedData.data.email,
       password: await bcrypt.hash(parsedData.data.password, 10),
     },
   });
@@ -56,7 +59,7 @@ router.post("/signin", async (req: Request, res: Response) => {
   }
 
   const user = await prismaClient.user.findFirst({
-    where: { email: parsedData.data.username },
+    where: { email: parsedData.data.email },
   });
 
   if (

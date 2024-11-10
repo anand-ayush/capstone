@@ -24,14 +24,16 @@ const router = (0, express_1.Router)();
 router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     const parsedData = types_1.SignupSchema.safeParse(body);
+    console.log(parsedData);
     if (!parsedData.success) {
         return res.status(411).json({
             message: "Incorrect inputs. Please check again.",
+            details: parsedData.error.errors
         });
     }
     const userExists = yield db_1.prismaClient.user.findFirst({
         where: {
-            email: parsedData.data.username,
+            email: parsedData.data.email,
         },
     });
     if (userExists) {
@@ -41,9 +43,8 @@ router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     yield db_1.prismaClient.user.create({
         data: {
-            firstname: parsedData.data.firstname,
-            lastname: parsedData.data.lastname,
-            email: parsedData.data.username,
+            fullname: parsedData.data.fullname,
+            email: parsedData.data.email,
             password: yield bcryptjs_1.default.hash(parsedData.data.password, 10),
         },
     });
@@ -60,7 +61,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
     const user = yield db_1.prismaClient.user.findFirst({
-        where: { email: parsedData.data.username },
+        where: { email: parsedData.data.email },
     });
     if (!user ||
         !(yield bcryptjs_1.default.compare(parsedData.data.password, user.password))) {
@@ -80,8 +81,7 @@ router.get("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, voi
     const user = yield db_1.prismaClient.user.findFirst({
         where: { id },
         select: {
-            firstname: true,
-            lastname: true,
+            fullname: true,
             email: true,
         },
     });

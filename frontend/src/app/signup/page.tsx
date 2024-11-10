@@ -25,7 +25,7 @@ export default function Signup() {
       const res = await axios.post(
         `${BACKEND_URL}/api/v1/user/signup`,
         {
-          username: email,
+          email: email,
           password,
           fullname,
         },
