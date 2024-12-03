@@ -2,7 +2,7 @@
 import React from "react";
 import axios from "axios";
 import { useState } from "react";
-import { BACKEND_URL } from "../config";
+import { BACKEND_URL } from "../../config";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -11,17 +11,23 @@ import { cookies } from "next/headers";
 export default function forgot() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [otp,setotp] = useState("");
+ const [password,setpassword] = useState("");
+     const [confirmpassword,setconfirmpassword] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/v1/forgotpassword`, {
+      const res = await axios.post(`${BACKEND_URL}/api/v1/resetpassword`, {
         email: email,
+        otp:otp,
+        password:password,
+        confirmpassword:confirmpassword
       });
       setMessage(res.data.message);
-      router.push("/forgotPassword/reset");
       toast.success(res.data.message);
+      router.push("/signin");
     } catch (error) {
         setMessage(error.response.data.message);
         toast.error(error.response.data.message);
@@ -37,38 +43,72 @@ export default function forgot() {
               <div className="mx-auto max-w-[500px] rounded bg-white px-6 py-10 shadow-three dark:bg-dark sm:p-[60px]">
                 
                 <p className="mb-11 text-center text-base font-medium text-body-color">
-                  Enter Your Email to reset your password.
+                  Enter Your Otp to reset your password.
                 </p>
 
                 
                 <form onSubmit={handleSubmit}>
-                  <div className="mb-8">
-                    <label
-                      htmlFor="email"
-                      className="mb-8 block text-sm text-dark dark:text-white font-extrabold text-center"
-                    >
-                      Forgot Password ?
-                    </label>
+  <div className="mb-8">
+    <label
+      htmlFor="email"
+      className="mb-8 block text-sm text-dark dark:text-white font-extrabold text-center"
+    >
+      Reset Your Password
+    </label>
+    <input
+      type="email"
+      name="email"
+      placeholder="Enter your Email"
+      value={email}
+      onChange={(e) => {
+        setEmail(e.target.value);
+      }}
+      className="mb-4 border-stroke w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+    />
 
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Enter your Email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                      }}
-                      className="border-stroke w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
-                    />
-                  </div>
-                  
-                
-                  <div className="mb-6">
-                    <button className="flex w-full items-center justify-center rounded-sm bg-primary px-9 py-4 text-base font-medium text-white shadow-submit duration-300 hover:bg-primary/90 dark:shadow-submit-dark">
-                      Send me a OTP
-                    </button>
-                  </div>
-                </form>
+    <input
+      type="password"
+      name="password"
+      placeholder="Enter your New Password"
+      value={password}
+      onChange={(e) => {
+        setpassword(e.target.value);
+      }}
+      className="mb-4 border-stroke w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+    />
+
+    <input
+      type="confirmpassword"
+      name="confirmpassword"
+      placeholder="Enter Confirm Password"
+      value={confirmpassword}
+      onChange={(e) => {
+        setconfirmpassword(e.target.value);
+      }}
+      className="mb-4 border-stroke w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+    />
+
+    <input
+      type="otp"
+      name="otp"
+      placeholder="Enter your OTP"
+      value={otp}
+      onChange={(e) => {
+        setotp(e.target.value);
+      }}
+      className="mb-4 border-stroke w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+    />
+
+
+  </div>
+
+  <div className="mb-6">
+    <button className="flex w-full items-center justify-center rounded-sm bg-primary px-9 py-4 text-base font-medium text-white shadow-submit duration-300 hover:bg-primary/90 dark:shadow-submit-dark">
+      Reset Password
+    </button>
+  </div>
+</form>
+
                 
               </div>
             </div>
