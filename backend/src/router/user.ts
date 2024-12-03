@@ -39,6 +39,7 @@ router.post("/signup", async (req: Request, res: Response) => {
       fullname:parsedData.data.fullname,
       email: parsedData.data.email,
       password: await bcrypt.hash(parsedData.data.password, 10),
+      role: parsedData.data.role,
     },
   });
 

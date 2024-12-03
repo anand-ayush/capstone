@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import "react-circular-progressbar/dist/styles.css";
 import { BACKEND_URL } from "../../config";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { cookies } from "next/headers";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -103,7 +103,7 @@ const prisonerForm = () => {
           },
         },
       );
-      if (res.data.success) {
+      if (res.status === 201) {
         setProgress(25);
         toast.success("Application submitted successfully!...");
       } else {
@@ -470,6 +470,7 @@ const prisonerForm = () => {
           </motion.div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };

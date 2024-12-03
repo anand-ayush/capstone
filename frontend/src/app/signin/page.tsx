@@ -4,9 +4,11 @@ import axios from "axios";
 import { useState } from "react";
 import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner"; 
 import Link from "next/link";
-import { cookies } from "next/headers";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
+
+
 
 export default function Login() {
   const router = useRouter();
@@ -20,13 +22,11 @@ export default function Login() {
         `${BACKEND_URL}/api/v1/user/signin`,
         {
           email: email,
-          password: password, // Explicitly include `password` for clarity
+          password: password, 
         },
       );
       const token = res.data.token;
       document.cookie = `token=${token}; path=/`;
-
-      
       toast.success("Login successful!"); 
       router.push("/dashboard"); 
     } catch (error) {
@@ -218,6 +218,7 @@ export default function Login() {
           </svg>
         </div>
       </section>
+      <ToastContainer />
     </>
   );
 };

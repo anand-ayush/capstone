@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
-import { prismaClient } from "../db"; // Prisma client for database access
-import { authMiddleware } from "../middleware"; // For authentication middleware
-import { PrisonerFormSchema } from "../types"; // Schema for form validation
+import { prismaClient } from "../db"; 
+import { authMiddleware } from "../middleware"; 
+import { PrisonerFormSchema } from "../types"; 
 
 const router = Router();
 

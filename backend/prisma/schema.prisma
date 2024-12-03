@@ -7,12 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  Prisoner
+  Lawyer
+}
 
 model User {
   id        Int      @id @default(autoincrement())
   fullname  String @default("Unknown")
   email     String   @unique
   password  String
+  role     Role       @default(Prisoner)
   Prisoner Prisoner?
   Lawyer   Lawyer?
   applicants Applicant[]
@@ -41,21 +46,20 @@ model Prisoner {
 
 model Lawyer {
   id                    Int       @id @default(autoincrement())
+  name                  String
+  email                 String    @unique
+  contacts              String
+  dateOfBirth             String
   barRegistrationNumber String    @unique
-  firmName              String
-  clientAccessAuth      Boolean   @default(false)
-  accessLevel           String
-  casesSolved           Int       @default(0)
-  specializations       String[]
-  licenseVerified       Boolean   @default(false)
-  clientList            String[]
+  casesSolved           String       @default("0")
+  specializations       String
+  licenseVerified       String       @default("")
   availability          String
-  professionalAffiliations String[]
+  additionalInfo          String
   userId                  Int       @unique
   user                    User      @relation(fields: [userId], references: [id])
   relationships         PrisonerLawyer[]
   cases                   Case[]
-
 }
 
 model PrisonerLawyer {

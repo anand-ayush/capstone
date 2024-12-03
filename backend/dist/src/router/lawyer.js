@@ -11,36 +11,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lawyerRouter = void 0;
 const express_1 = require("express");
-const db_1 = require("../db"); // Prisma client for database access
-const middleware_1 = require("../middleware"); // For authentication middleware
-const types_1 = require("../types"); // Import schema for form validation
+const db_1 = require("../db");
+const middleware_1 = require("../middleware");
+const types_1 = require("../types");
 const router = (0, express_1.Router)();
-// Route to push lawyer data to the database
-router.post("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/lawyerform", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const body = req.body;
-    // Validate input data using the LawyerFormSchema
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    // Validate input data
     const parsedData = types_1.LawyerFormSchema.safeParse(body);
     if (!parsedData.success) {
-        return res.status(411).json({
+        return res.status(400).json({
             message: "Invalid form inputs. Please check again.",
-            details: parsedData.error.errors,
+            errors: parsedData.error.errors.map((err) => ({
+                field: err.path.join("."),
+                message: err.message,
+            })),
         });
     }
     try {
-        // Push lawyer data to the database
         const lawyer = yield db_1.prismaClient.lawyer.create({
+            // @ts-ignore
             data: {
+                name: parsedData.data.name,
+                email: parsedData.data.email,
+                dateOfBirth: parsedData.data.dateOfBirth,
+                contacts: parsedData.data.contacts,
                 barRegistrationNumber: parsedData.data.barRegistrationNumber,
-                firmName: parsedData.data.firmName,
-                clientAccessAuth: parsedData.data.clientAccessAuth || false,
-                accessLevel: parsedData.data.accessLevel,
-                casesSolved: parsedData.data.casesSolved || 0,
-                specializations: parsedData.data.specializations || [],
-                licenseVerified: parsedData.data.licenseVerified || false,
-                clientList: parsedData.data.clientList || [],
+                casesSolved: parsedData.data.casesSolved,
+                specializations: parsedData.data.specializations,
+                licenseVerified: parsedData.data.licenseVerified,
                 availability: parsedData.data.availability,
-                professionalAffiliations: parsedData.data.professionalAffiliations || [],
-                userId: parsedData.data.userId,
+                additionalInfo: (_b = parsedData.data.additionalInfo) !== null && _b !== void 0 ? _b : "",
+                userId: userId,
             },
         });
         return res.status(201).json({
@@ -49,7 +53,7 @@ router.post("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, vo
         });
     }
     catch (error) {
-        console.error("Error submitting lawyer data:", error);
+        console.error("Error submitting lawyer data:", error.message, error.stack);
         return res.status(500).json({
             message: "An error occurred while submitting lawyer data.",
         });

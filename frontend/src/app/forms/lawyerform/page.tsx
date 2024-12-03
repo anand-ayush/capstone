@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-// import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import "react-circular-progressbar/dist/styles.css";
 import { BACKEND_URL } from "../../config";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { cookies } from "next/headers";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
+
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -17,16 +17,18 @@ const fadeInUp = {
 
 const lawyerForm = () => {
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
+    contact:"",
+    dateOfBirth: "",
     barRegistrationNumber: "",
-    firmName: "",
+    casesSolved: "",
     specializations: "",
-    licenseExpiryDate: "",
-    // clientList: "",
-    communicationPreferences: "",
+    licenseVerified: "",
     availability: "",
-    professionalAffiliations: "",
     additionalInfo: "",
+
+
     file: null,
   });
   const [theme, setTheme] = useState("dark");
@@ -48,45 +50,53 @@ const lawyerForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Ensure the "isSubmitting" state is reset when form submission starts
     setIsSubmitting(true);
-
-    // Form validation
     if (
+      !formData.name ||
       !formData.email ||
+      !formData.contact ||
+      !formData.dateOfBirth ||
       !formData.barRegistrationNumber ||
-      !formData.firmName ||
+      !formData.casesSolved ||
       !formData.specializations ||
-      !formData.licenseExpiryDate ||
-      !formData.communicationPreferences ||
+      !formData.licenseVerified ||
       !formData.availability ||
-      !formData.professionalAffiliations
+      !formData.additionalInfo
     ) {
-      alert("Please fill out all required fields.");
+      toast.warn("Please fill out all required fields.");
       setIsSubmitting(false);
       return;
     }
+    //  Token
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      .split("=")[1];
 
     try {
       const res = await axios.post(
-        `${BACKEND_URL}/api/v1/bail`,
+        `${BACKEND_URL}/api/v1/forms/lawyerform`,
         {
-          applicantName: formData.applicantName,
-          caseNumber: formData.caseNumber,
+          name: formData.name,
           email: formData.email,
-          address: formData.address,
+          contact: formData.contact,
+          dateOfBirth: formData.dateOfBirth,
+          barRegistrationNumber: formData.barRegistrationNumber,
+          casesSolved: formData.casesSolved,
+          specializations: formData.specializations,
+          licenseVerified: formData.licenseVerified,
+          availability: formData.availability,
           additionalInfo: formData.additionalInfo,
-          file: formData.file,
         },
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         },
       );
-      if (res.data.success) {
+      if (res.status === 201) {
         setProgress(25);
-        await generatePDF();
         toast.success("Application submitted successfully!...");
       } else {
         toast.error("Unable to submit application. Please try again.");
@@ -94,9 +104,9 @@ const lawyerForm = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
-        "Error during Applicatiopn. Please try again.";
-      toast.error(errorMessage);
-      toast.error("Error during signup:", error);
+        "Error during Application. Please try again.";
+
+      toast.error("Error during Application. Please try again");
     } finally {
       setIsSubmitting(false);
     }
@@ -115,17 +125,6 @@ const lawyerForm = () => {
       ...prevData,
       file: e.target.files[0],
     }));
-  };
-
-  const getBase64FromUrl = async (url) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const reader = new FileReader();
-    return new Promise((resolve, reject) => {
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
   };
 
   return (
@@ -164,37 +163,16 @@ const lawyerForm = () => {
                     htmlFor="applicantName"
                     className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
                   >
-                    Lawyer Name
+                    Lawyer's Name
                   </label>
                   <div className="mt-2">
                     <input
                       id="applicantName"
-                      name="applicantName"
+                      name="name"
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="Enter Your name"
                       autoComplete="name"
-                      value={formData.applicantName}
-                      onChange={handleInputChange}
-                      className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
-                    />
-                  </div>
-                </motion.div>
-
-                {/* Case Number */}
-                <motion.div className="sm:col-span-4" {...fadeInUp}>
-                  <label
-                    htmlFor="caseNumber"
-                    className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
-                  >
-                    Email
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="caseNumber"
-                      name="caseNumber"
-                      type="text"
-                      // placeholder="1234-5678"
-                      value={formData.caseNumber}
+                      value={formData.name}
                       onChange={handleInputChange}
                       className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
                     />
@@ -204,18 +182,17 @@ const lawyerForm = () => {
                 {/* Email */}
                 <motion.div className="sm:col-span-4" {...fadeInUp}>
                   <label
-                    htmlFor="email"
+                    htmlFor="caseNumber"
                     className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
                   >
-                    Bar Registration Number
+                    Email
                   </label>
                   <div className="mt-2">
                     <input
                       id="email"
                       name="email"
-                      type="email"
-                      placeholder="john.doe@example.com"
-                      autoComplete="email"
+                      type="text"
+                      placeholder="enter email"
                       value={formData.email}
                       onChange={handleInputChange}
                       className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
@@ -223,123 +200,147 @@ const lawyerForm = () => {
                   </div>
                 </motion.div>
 
-                {/* Address */}
+                {/* Contact */}
                 <motion.div className="sm:col-span-4" {...fadeInUp}>
                   <label
-                    htmlFor="address"
+                    htmlFor="contact"
                     className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
                   >
-                    Firm name
+                    Contact No
                   </label>
                   <div className="mt-2">
                     <input
-                      id="address"
-                      name="address"
+                      id="contact"
+                      name="contact"
                       type="text"
-                      placeholder="123 Main St, City, Country"
-                      value={formData.address}
+                      placeholder="enter contact details"
+                      value={formData.contact}
                       onChange={handleInputChange}
                       className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
                     />
                   </div>
                 </motion.div>
 
-                {/* specializations */}
+                {/* Date of Birth*/}
                 <motion.div className="sm:col-span-4" {...fadeInUp}>
                   <label
-                    htmlFor="address"
+                    htmlFor="DOB"
                     className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
                   >
-                    Specializations
+                    Date Of Birth
                   </label>
                   <div className="mt-2">
                     <input
-                      id="address"
-                      name="address"
-                      type="text"
-                      placeholder="123 Main St, City, Country"
-                      value={formData.address}
+                      id="dateofbirth"
+                      name="dateOfBirth"
+                      type="date"
+                      placeholder="enter DOB "
+                      value={formData.dateOfBirth}
                       onChange={handleInputChange}
                       className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
                     />
                   </div>
                 </motion.div>
 
-                {/* licenseExpiryDate */}
+                {/* Bar Registration No */}
                 <motion.div className="sm:col-span-4" {...fadeInUp}>
                   <label
-                    htmlFor="address"
+                    htmlFor="barRegistrationNumber"
                     className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
                   >
-                    License Expiry Date
+                    Enter Bar Registration Number
                   </label>
                   <div className="mt-2">
                     <input
-                      id="address"
-                      name="address"
+                      id="barRegistrationNumber"
+                      name="barRegistrationNumber"
                       type="text"
-                      placeholder="123 Main St, City, Country"
-                      value={formData.address}
+                      placeholder="enter location"
+                      value={formData.barRegistrationNumber}
                       onChange={handleInputChange}
                       className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
                     />
                   </div>
                 </motion.div>
-                {/* communicationPreferences */}
+
+                {/* Cases Solved */}
                 <motion.div className="sm:col-span-4" {...fadeInUp}>
                   <label
-                    htmlFor="address"
+                    htmlFor="casesSolved"
                     className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
                   >
-                    Communication Preferences
+                    Cases Solved
                   </label>
                   <div className="mt-2">
                     <input
-                      id="address"
-                      name="address"
+                      id="casesSolved"
+                      name="casesSolved"
                       type="text"
-                      placeholder="123 Main St, City, Country"
-                      value={formData.address}
+                      placeholder="Enter the crime"
+                      value={formData.casesSolved}
                       onChange={handleInputChange}
                       className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
                     />
                   </div>
                 </motion.div>
-                {/* availability */}
+                {/* specializations  */}
                 <motion.div className="sm:col-span-4" {...fadeInUp}>
                   <label
-                    htmlFor="address"
+                    htmlFor="securityQuestion"
+                    className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
+                  >
+                    Enter specializations
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="specializations"
+                      name="specializations"
+                      type="text"
+                      placeholder="Enter Specializations"
+                      value={formData.specializations}
+                      onChange={handleInputChange}
+                      className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* License Verified */}
+
+                <motion.div className="sm:col-span-4" {...fadeInUp}>
+                  <label
+                    htmlFor="emergencyContact"
+                    className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
+                  >
+                    Enter Licence No
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="licenseVerified"
+                      name="licenseVerified"
+                      type="text"
+                      placeholder="Enter emergencyContact"
+                      value={formData.licenseVerified}
+                      onChange={handleInputChange}
+                      className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Availability */}
+                <motion.div className="sm:col-span-4" {...fadeInUp}>
+                  <label
+                    htmlFor="inmateStatus"
                     className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
                   >
                     Availability
                   </label>
                   <div className="mt-2">
                     <input
-                      id="address"
-                      name="address"
+                      id="availability"
+                      name="availability"
                       type="text"
-                      placeholder="123 Main St, City, Country"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
-                    />
-                  </div>
-                </motion.div>
-                {/* ProfessionalAffiliations */}
-                <motion.div className="sm:col-span-4" {...fadeInUp}>
-                  <label
-                    htmlFor="address"
-                    className={`block text-sm font-medium leading-6 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}
-                  >
-                    Professional Affiliations
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="address"
-                      name="address"
-                      type="text"
-                      placeholder="123 Main St, City, Country"
-                      value={formData.address}
+                      placeholder="Enter availability"
+                      value={formData.availability}
                       onChange={handleInputChange}
                       className={`block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ${theme === "dark" ? "bg-gray-700 text-gray-300 ring-gray-600 focus:ring-indigo-500" : "bg-white text-gray-900 ring-gray-300 focus:ring-indigo-600"} sm:text-sm sm:leading-6`}
                     />
@@ -399,7 +400,9 @@ const lawyerForm = () => {
           </motion.div>
         </form>
       </div>
+      <ToastContainer />
     </div>
+
   );
 };
 

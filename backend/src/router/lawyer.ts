@@ -1,52 +1,67 @@
 import { Router, Request, Response } from "express";
-import { prismaClient } from "../db"; // Prisma client for database access
-import { authMiddleware } from "../middleware"; // For authentication middleware
-import { LawyerFormSchema } from "../types"; // Import schema for form validation
+import { prismaClient } from "../db";
+import { authMiddleware } from "../middleware";
+import { LawyerFormSchema } from "../types";
 
 const router = Router();
 
-// Route to push lawyer data to the database
-router.post("/", authMiddleware, async (req: Request, res: Response) => {
-  const body = req.body;
+interface AuthenticatedRequest extends Request {
+  user?: { id: number; email: string }; 
+}
 
-  // Validate input data using the LawyerFormSchema
-  const parsedData = LawyerFormSchema.safeParse(body);
+router.post(
+  "/lawyerform",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const body = req.body;
+    const userId = req.user?.id;
 
-  if (!parsedData.success) {
-    return res.status(411).json({
-      message: "Invalid form inputs. Please check again.",
-      details: parsedData.error.errors,
-    });
+    // Validate input data
+    const parsedData = LawyerFormSchema.safeParse(body);
+
+    if (!parsedData.success) {
+      return res.status(400).json({
+        message: "Invalid form inputs. Please check again.",
+        errors: parsedData.error.errors.map((err) => ({
+          field: err.path.join("."),
+          message: err.message,
+        })),
+      });
+    }
+
+    try {
+      const lawyer = await prismaClient.lawyer.create({
+        // @ts-ignore
+        data: {
+          name: parsedData.data.name,
+          email: parsedData.data.email,
+          dateOfBirth: parsedData.data.dateOfBirth,
+          contacts: parsedData.data.contacts,
+          barRegistrationNumber: parsedData.data.barRegistrationNumber,
+          casesSolved: parsedData.data.casesSolved,
+          specializations: parsedData.data.specializations,
+          licenseVerified: parsedData.data.licenseVerified,
+          availability: parsedData.data.availability,
+          additionalInfo: parsedData.data.additionalInfo ?? "",
+          userId: userId,
+        },
+      });
+
+      return res.status(201).json({
+        message: "Lawyer data submitted successfully.",
+        lawyer,
+      });
+    } catch (error: any) {
+      console.error(
+        "Error submitting lawyer data:",
+        error.message,
+        error.stack
+      );
+      return res.status(500).json({
+        message: "An error occurred while submitting lawyer data.",
+      });
+    }
   }
-
-  try {
-    // Push lawyer data to the database
-    const lawyer = await prismaClient.lawyer.create({
-      data: {
-        barRegistrationNumber: parsedData.data.barRegistrationNumber,
-        firmName: parsedData.data.firmName,
-        clientAccessAuth: parsedData.data.clientAccessAuth || false, 
-        accessLevel: parsedData.data.accessLevel,
-        casesSolved: parsedData.data.casesSolved || 0,
-        specializations: parsedData.data.specializations || [], 
-        licenseVerified: parsedData.data.licenseVerified || false,
-        clientList: parsedData.data.clientList || [], 
-        availability: parsedData.data.availability,
-        professionalAffiliations:parsedData.data.professionalAffiliations || [], 
-        userId: parsedData.data.userId, 
-      },
-    });
-
-    return res.status(201).json({
-      message: "Lawyer data submitted successfully.",
-      lawyer,
-    });
-  } catch (error) {
-    console.error("Error submitting lawyer data:", error);
-    return res.status(500).json({
-      message: "An error occurred while submitting lawyer data.",
-    });
-  }
-});
+);
 
 export const lawyerRouter = router;

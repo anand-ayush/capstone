@@ -46,6 +46,7 @@ router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function*
             fullname: parsedData.data.fullname,
             email: parsedData.data.email,
             password: yield bcryptjs_1.default.hash(parsedData.data.password, 10),
+            role: parsedData.data.role,
         },
     });
     return res.json({

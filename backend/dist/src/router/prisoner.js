@@ -11,9 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prisonRouter = void 0;
 const express_1 = require("express");
-const db_1 = require("../db"); // Prisma client for database access
-const middleware_1 = require("../middleware"); // For authentication middleware
-const types_1 = require("../types"); // Schema for form validation
+const db_1 = require("../db");
+const middleware_1 = require("../middleware");
+const types_1 = require("../types");
 const router = (0, express_1.Router)();
 // Route to push prisoner data to the database
 router.post("/prisonerform", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

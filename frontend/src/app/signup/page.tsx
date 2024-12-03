@@ -4,8 +4,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 
 export default function Signup() {
@@ -13,6 +13,7 @@ export default function Signup() {
   const [fullname, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
 
 
@@ -31,6 +32,7 @@ export default function Signup() {
           email: email,
           password,
           fullname,
+          role,
         },
         {
           headers: {
@@ -38,10 +40,10 @@ export default function Signup() {
           },
         },
       );
-      if (res.data.success ==200) {
+      if (res.status === 200) {
         toast.success("Signup successful! Redirecting...");
         setTimeout(() => {
-          router.push("/role-selection");
+          router.push("/signin");
         }, 1500);
       } else {
         toast.error("Signup failed. Please try again.");
@@ -51,7 +53,6 @@ export default function Signup() {
         error.response?.data?.message ||
         "Error during signup. Please try again.";
       toast.error(errorMessage);
-      toast.error("Error during signup:", error);
     } finally {
       setLoading(false);
     }
@@ -70,7 +71,6 @@ export default function Signup() {
                 <p className="mb-11 text-center text-base font-medium text-body-color">
                   It’s totally free and super easy
                 </p>
-                
 
                 <div className="mb-8 flex items-center justify-center">
                   <span className="hidden h-[1px] w-full max-w-[60px] bg-body-color/50 sm:block"></span>
@@ -137,6 +137,27 @@ export default function Signup() {
                       className="border-stroke w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
                     />
                   </div>
+
+                  {/* Role Selection */}
+                  <div className="mb-8">
+                    <label
+                      htmlFor="role"
+                      className="mb-3 block text-sm text-dark dark:text-white"
+                    >
+                      Choose Your Role
+                    </label>
+                    <select
+                      name="role"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                      className="border-stroke w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+                    >
+                      <option value="">Select Your Role</option>
+                      <option value="Prisoner">Prisoner</option>
+                      <option value="Lawyer">Lawyer</option>
+                    </select>
+                  </div>
+
                   <div className="mb-8 flex">
                     <label
                       htmlFor="checkboxLabel"
@@ -259,6 +280,7 @@ export default function Signup() {
           </svg>
         </div>
       </section>
+      <ToastContainer />
     </>
   );
 }
