@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  fullname  String @default("Unknown")
+  email     String   @unique
+  password  String
+  Prisoner Prisoner?
+  Lawyer   Lawyer?
+  applicants Applicant[]
+}
+
+model Prisoner {
+  id                      Int       @id @default(autoincrement())
+  name                    String
+  email                   String    @unique
+  prisonerId              String    @unique
+  dateOfBirth             String
+  prisonLocation          String
+  crime                   String
+  securityQuestion        String
+  emergencyContact        String
+  inmateStatus            String
+  caseId                  String    @unique
+  languagePreference      String
+  medicalInfo             String
+  additionalInfo          String 
+  userId                  Int       @unique
+  user                    User      @relation(fields: [userId], references: [id])
+  relationships           PrisonerLawyer[]
+  cases                   Case[]
+}
+
+model Lawyer {
+  id                    Int       @id @default(autoincrement())
+  barRegistrationNumber String    @unique
+  firmName              String
+  clientAccessAuth      Boolean   @default(false)
+  accessLevel           String
+  casesSolved           Int       @default(0)
+  specializations       String[]
+  licenseVerified       Boolean   @default(false)
+  clientList            String[]
+  availability          String
+  professionalAffiliations String[]
+  userId                  Int       @unique
+  user                    User      @relation(fields: [userId], references: [id])
+  relationships         PrisonerLawyer[]
+  cases                   Case[]
+
+}
+
+model PrisonerLawyer {
+  id                  Int       @id @default(autoincrement())
+  prisonerId          Int
+  lawyerId            Int
+  relationshipStatus  String
+  appointmentHistory  String[]
+  caseStatus          String
+
+  prisoner            Prisoner @relation(fields: [prisonerId], references: [id])
+  lawyer              Lawyer   @relation(fields: [lawyerId], references: [id])
+}
+
+model Applicant {
+  id             Int      @id @default(autoincrement())
+  applicantName  String
+  caseNumber     String
+  email          String   @unique
+  address        String
+  additionalInfo String?  // Optional field
+  file           String?  // Path or URL to the file, optional
+  userid         Int      @unique
+  user           User     @relation(fields: [userid], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+model Case {
+  id            Int                @id @default(autoincrement())
+  prisonerId    Int
+  lawyerId      Int
+  status        String             // e.g., "Open", "Closed", "Pending Review"
+  hearingDates  DateTime[]
+  documents     String[]           // URLs or paths to case documents
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  prisoner      Prisoner           @relation(fields: [prisonerId], references: [id])
+  lawyer        Lawyer             @relation(fields: [lawyerId], references: [id])
+}
