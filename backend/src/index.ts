@@ -19,6 +19,6 @@ app.use("/api/v1/bail", bailRouter);
 app.use("/api/v1/forms", prisonRouter);
 app.use("/api/v1/forms", lawyerRouter);
 app.use("/api/v1/cases", caseRouter);
-app.use("/api/v1/forgotPassword", resetPasswordRouter);
+app.use("/api/v1", resetPasswordRouter);
  
 app.listen(3000);
