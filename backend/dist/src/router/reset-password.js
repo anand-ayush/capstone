@@ -14,11 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resetPasswordRouter = void 0;
 const express_1 = require("express");
-const nodemailer_1 = __importDefault(require("nodemailer"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const db_1 = require("../db");
+const sendEmail = require("./sendemail");
 const router = (0, express_1.Router)();
-router.post("/forgotPassword", 
+router.post("/forgotpassword", 
 // @ts-ignore
 (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
@@ -39,40 +39,70 @@ router.post("/forgotPassword",
                 message: "User not found",
             });
         }
-        // Create email HTML content
-        const html = `
-        <p>Hi, ${userAvailable.fullname || "User"},</p>
-        <p>Here's your password recovery link:</p>
-        <a href="https://courtLink.vercel.app/reset-password/${userAvailable.id}">
-          Reset password here
-        </a>
-        <p>Best regards,<br />CourtLink Team</p>
-      `;
-        // Configure Nodemailer transporter
-        const transporter = nodemailer_1.default.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.GOOGLE_ACCOUNT_USER,
-                pass: process.env.GOOGLE_ACCOUNT_PASS,
-            },
-        });
-        // Send the email
-        const info = yield transporter.sendMail({
-            from: '"CourtLink" <courtLink.discussion@gmail.com>', // Sender address
-            to: userAvailable.email,
-            subject: "Reset your password", // Email subject
-            html, // Email content in HTML format
-        });
-        return res.status(200).json({
-            success: true,
-            message: "Password recovery email has been sent successfully",
-            id: userAvailable.id,
-            email: userAvailable.email,
-            info,
-        });
+        const message = `Your OTP is 51216 \n\nIf you have not requested this email then, please ignore it.`;
+        try {
+            yield sendEmail({
+                email: userAvailable.email,
+                subject: `CourtLink Password Recovery`,
+                message,
+            });
+            res.status(200).json({
+                success: true,
+                message: `Email sent to ${userAvailable.email} successfully`,
+            });
+        }
+        catch (error) {
+            console.error("Email could not be sent", error);
+            return res.status(500).json({ success: false, message: "Email could not be sent" });
+        }
     }
     catch (error) {
         return next(error); // Pass error to the global error handler
     }
 })));
+router.post("/resetpassword", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, otp, password, confirmpassword } = req.body;
+    if (!email || !otp || !password || !confirmpassword) {
+        return res.status(400).json({
+            success: false,
+            message: "Email, OTP and Password fields are required",
+        });
+    }
+    if (password !== confirmpassword) {
+        return res.status(400).json({
+            success: false,
+            message: "Password and Confirm Password do not match",
+        });
+    }
+    try {
+        const userAvailable = yield db_1.prismaClient.user.findUnique({
+            where: { email },
+        });
+        if (!userAvailable) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+        if (otp !== "51216") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP",
+            });
+        }
+        const updatedUser = yield db_1.prismaClient.user.update({
+            where: { email },
+            data: {
+                password,
+            },
+        });
+        res.status(200).json({
+            success: true,
+            message: "Password updated successfully",
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ success: false, message: "Password could not be updated" });
+    }
+}));
 exports.resetPasswordRouter = router;
