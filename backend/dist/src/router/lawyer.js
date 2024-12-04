@@ -19,6 +19,11 @@ router.post("/lawyerform", middleware_1.authMiddleware, (req, res) => __awaiter(
     var _a, _b;
     const body = req.body;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    if (!userId) {
+        return res.status(400).json({
+            message: "User ID is required to create a lawyer record.",
+        });
+    }
     // Validate input data
     const parsedData = types_1.LawyerFormSchema.safeParse(body);
     if (!parsedData.success) {
@@ -32,16 +37,18 @@ router.post("/lawyerform", middleware_1.authMiddleware, (req, res) => __awaiter(
     }
     try {
         const lawyer = yield db_1.prismaClient.lawyer.create({
-            // @ts-ignore
             data: {
+                // @ts-ignore
                 name: parsedData.data.name,
                 email: parsedData.data.email,
                 dateOfBirth: parsedData.data.dateOfBirth,
                 contacts: parsedData.data.contacts,
                 barRegistrationNumber: parsedData.data.barRegistrationNumber,
-                casesSolved: parsedData.data.casesSolved,
-                specializations: parsedData.data.specializations,
-                licenseVerified: parsedData.data.licenseVerified,
+                casesSolved: Number(parsedData.data.casesSolved),
+                specializations: parsedData.data.specializations
+                    .split(",")
+                    .map((spec) => spec.trim()),
+                licenseVerified: parsedData.data.licenseVerified === "true",
                 availability: parsedData.data.availability,
                 additionalInfo: (_b = parsedData.data.additionalInfo) !== null && _b !== void 0 ? _b : "",
                 userId: userId,

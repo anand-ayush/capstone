@@ -15,6 +15,11 @@ router.post(
   async (req: AuthenticatedRequest, res: Response) => {
     const body = req.body;
     const userId = req.user?.id;
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required to create a lawyer record.",
+      });
+    }
 
     // Validate input data
     const parsedData = LawyerFormSchema.safeParse(body);
@@ -31,16 +36,18 @@ router.post(
 
     try {
       const lawyer = await prismaClient.lawyer.create({
-        // @ts-ignore
         data: {
+          // @ts-ignore
           name: parsedData.data.name,
           email: parsedData.data.email,
           dateOfBirth: parsedData.data.dateOfBirth,
           contacts: parsedData.data.contacts,
           barRegistrationNumber: parsedData.data.barRegistrationNumber,
-          casesSolved: parsedData.data.casesSolved,
-          specializations: parsedData.data.specializations,
-          licenseVerified: parsedData.data.licenseVerified,
+          casesSolved: Number(parsedData.data.casesSolved),
+          specializations:parsedData.data.specializations
+          .split(",")
+          .map((spec) => spec.trim()),
+          licenseVerified: parsedData.data.licenseVerified === "true",
           availability: parsedData.data.availability,
           additionalInfo: parsedData.data.additionalInfo ?? "",
           userId: userId,
