@@ -51,9 +51,9 @@ model Lawyer {
   contacts              String
   dateOfBirth             String
   barRegistrationNumber String    @unique
-  casesSolved           String       @default("0")
-  specializations       String
-  licenseVerified       String       @default("")
+  casesSolved           Int       @default(0)
+  specializations       String[]
+  licenseVerified       Boolean      @default(true)
   availability          String
   additionalInfo          String
   userId                  Int       @unique

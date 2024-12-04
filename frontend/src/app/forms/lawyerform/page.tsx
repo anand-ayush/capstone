@@ -79,7 +79,7 @@ const lawyerForm = () => {
         {
           name: formData.name,
           email: formData.email,
-          contact: formData.contact,
+          contacts: formData.contact,
           dateOfBirth: formData.dateOfBirth,
           barRegistrationNumber: formData.barRegistrationNumber,
           casesSolved: formData.casesSolved,
