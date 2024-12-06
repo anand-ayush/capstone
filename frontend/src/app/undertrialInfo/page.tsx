@@ -6,12 +6,6 @@ import Image from "next/image";
 
 import { Metadata } from "next";
 
-// export const metadata: Metadata = {
-//   title: "Blog Details Page | Free Next.js Template for Startup and SaaS",
-//   description: "This is Blog Details Page for Startup Nextjs Template",
-  
-// };
-
 const undertrialInfo = () => {
   return (
     <>
@@ -37,7 +31,7 @@ const undertrialInfo = () => {
                       </div>
                       <div className="w-full">
                         <span className="mb-1 text-base font-medium text-body-color">
-                          By <span> Ayush Anand</span>
+                          By <span> Legal Research Team</span>
                         </span>
                       </div>
                     </div>
@@ -61,7 +55,7 @@ const undertrialInfo = () => {
                             <path d="M13.2637 3.3697H7.64754V2.58105C8.19721 2.43765 8.62738 1.91189 8.62738 1.31442C8.62738 0.597464 8.02992 0 7.28906 0C6.54821 0 5.95074 0.597464 5.95074 1.31442C5.95074 1.91189 6.35702 2.41376 6.93058 2.58105V3.3697H1.31442C0.597464 3.3697 0 3.96716 0 4.68412V13.2637C0 13.9807 0.597464 14.5781 1.31442 14.5781H13.2637C13.9807 14.5781 14.5781 13.9807 14.5781 13.2637V4.68412C14.5781 3.96716 13.9807 3.3697 13.2637 3.3697ZM6.6677 1.31442C6.6677 0.979841 6.93058 0.716957 7.28906 0.716957C7.62364 0.716957 7.91042 0.979841 7.91042 1.31442C7.91042 1.649 7.64754 1.91189 7.28906 1.91189C6.95448 1.91189 6.6677 1.6251 6.6677 1.31442ZM1.31442 4.08665H13.2637C13.5983 4.08665 13.8612 4.34954 13.8612 4.68412V6.45261H0.716957V4.68412C0.716957 4.34954 0.979841 4.08665 1.31442 4.08665ZM13.2637 13.8612H1.31442C0.979841 13.8612 0.716957 13.5983 0.716957 13.2637V7.16957H13.8612V13.2637C13.8612 13.5983 13.5983 13.8612 13.2637 13.8612Z" />
                           </svg>
                         </span>
-                        02 Dec 2024
+                        
                       </p>
                       <p className="mr-5 flex items-center text-base font-medium text-body-color">
                         <span className="mr-3">
@@ -332,6 +326,39 @@ const undertrialInfo = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="items-center justify-between sm:flex">
+                    <div className="mb-5">
+                      <h4 className="mb-3 text-sm font-medium text-body-color">
+                        Important Links:
+                      </h4>
+                      <div className="flex flex-wrap items-center">
+                        <a
+                          href="https://nalsa.gov.in/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mb-2 mr-3 inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary hover:text-white"
+                        >
+                          National Legal Services Authority (NALSA)
+                        </a>
+                        <a
+                          href="https://districts.ecourts.gov.in/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mb-2 mr-3 inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary hover:text-white"
+                        >
+                          eCourts Services
+                        </a>
+                        <a
+                          href="https://doj.gov.in/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mb-2 mr-3 inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary hover:text-white"
+                        >
+                          Department of Justice (India)
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -362,37 +389,7 @@ const undertrialInfo = () => {
                   </button>
                 </div>
               </div>
-              <div className="mb-10 rounded-sm bg-white shadow-three dark:bg-gray-dark dark:shadow-none">
-                <h3 className="border-b border-body-color border-opacity-10 px-8 py-4 text-lg font-semibold text-black dark:border-white dark:border-opacity-10 dark:text-white">
-                  Related Posts
-                </h3>
-                <ul className="p-8">
-                  <li className="mb-6 border-b border-body-color border-opacity-10 pb-6 dark:border-white dark:border-opacity-10">
-                    <RelatedPost
-                      title="Best way to boost your online sales."
-                      image="/images/blog/post-01.jpg"
-                      slug="#"
-                      date="12 Feb 2025"
-                    />
-                  </li>
-                  <li className="mb-6 border-b border-body-color border-opacity-10 pb-6 dark:border-white dark:border-opacity-10">
-                    <RelatedPost
-                      title="50 Best web design tips & tricks that will help you."
-                      image="/images/blog/post-02.jpg"
-                      slug="#"
-                      date="15 Feb, 2024"
-                    />
-                  </li>
-                  <li>
-                    <RelatedPost
-                      title="The 8 best landing page builders, reviewed"
-                      image="/images/blog/post-03.jpg"
-                      slug="#"
-                      date="05 Jun, 2024"
-                    />
-                  </li>
-                </ul>
-              </div>
+              
               <div className="mb-10 rounded-sm bg-white shadow-three dark:bg-gray-dark dark:shadow-none">
                 <h3 className="border-b border-body-color border-opacity-10 px-8 py-4 text-lg font-semibold text-black dark:border-white dark:border-opacity-10 dark:text-white">
                   Popular Category

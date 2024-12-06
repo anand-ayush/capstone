@@ -42,11 +42,16 @@ export default function Signup() {
       );
       if (res.status === 200) {
         toast.success("Signup successful! Redirecting...");
-        setTimeout(() => {
-          router.push("/signin");
-        }, 1500);
+        // Redirect based on the selected role
+        if(role === "Lawyer"){
+          router.push("/forms/lawyerform");
+        }
+        else if(role === "Prisoner"){
+          router.push("/forms/prisonerform");
+        }
+        
       } else {
-        toast.error("Signup failed. Please try again.");
+        toast.error("Signup failed please fill all details & try again.");
       }
     } catch (error) {
       const errorMessage =

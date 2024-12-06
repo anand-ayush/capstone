@@ -15,7 +15,7 @@ const db_1 = require("../db");
 const middleware_1 = require("../middleware");
 const types_1 = require("../types");
 const router = (0, express_1.Router)();
-// Route to push prisoner data to the database
+// Route to push prisoner data to the database  
 router.post("/prisonerform", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const body = req.body;

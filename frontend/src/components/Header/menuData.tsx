@@ -36,39 +36,34 @@ const menuData: Menu[] = [
     title: "More",
     newTab: false,
     submenu: [
-      {
-        id: 41,
-        title: "Legal Resources",
-        path: "/about",
-        newTab: false,
-      },
+      // {
+      //   id: 41,
+      //   title: "Legal Resources",
+      //   path: "/legalResources",
+      //   newTab: false,
+      // },
       {
         id: 42,
-        title: "Case Tracker",
+        title: "Contact Us",
         path: "/contact",
         newTab: false,
       },
       {
         id: 43,
-        title: "Testimonials",
+        title: "Help Center",
         path: "/blog",
         newTab: false,
       },
       {
         id: 44,
         title: "About Us",
-        path: "/blog-sidebar",
+        path: "/about",
         newTab: false,
       },
-      {
-        id: 45,
-        title: "Contact Us",
-        path: "/blog-details",
-        newTab: false,
-      },
+     
       {
         id: 46,
-        title: "FAQ",
+        title: "SignIn",
         path: "/signin",
         newTab: false,
       },

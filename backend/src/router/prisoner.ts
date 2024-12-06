@@ -9,7 +9,7 @@ interface AuthenticatedRequest extends Request {
   user?: { id: number; email: string }; // Should match the payload structure in your JWT
 }
 
-// Route to push prisoner data to the database
+// Route to push prisoner data to the database  
 router.post(
   "/prisonerform",
   authMiddleware,
