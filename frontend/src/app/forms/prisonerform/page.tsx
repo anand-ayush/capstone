@@ -7,6 +7,7 @@ import { BACKEND_URL } from "../../config";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
+import { Router } from "next/router";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -14,6 +15,7 @@ const fadeInUp = {
 };
 
 const prisonerForm = () => {
+  const Router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -106,6 +108,7 @@ const prisonerForm = () => {
       if (res.status === 201) {
         setProgress(25);
         toast.success("Application submitted successfully!...");
+        Router.push("/prisonprofile");
       } else {
         toast.error("Unable to submit application. Please try again.");
       }
@@ -114,7 +117,7 @@ const prisonerForm = () => {
         error.response?.data?.message ||
         "Error during Applicatiopn. Please try again.";
 
-      toast.error("Error during signup:", error);
+      toast.error("Error during signup:", errorMessage);
     } finally {
       setIsSubmitting(false);
     }

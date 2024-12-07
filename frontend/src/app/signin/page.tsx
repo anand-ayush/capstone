@@ -14,6 +14,7 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); 
@@ -28,7 +29,33 @@ export default function Login() {
       const token = res.data.token;
       document.cookie = `token=${token}; path=/`;
       toast.success("Login successful!"); 
-      router.push("/dashboard"); 
+      try{
+        const response = await axios.get(`${BACKEND_URL}/api/v1/user/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+       
+        document.cookie = `role=${response.data.user.role}; path=/`;
+        setRole(response.data.user.role);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const errorMessage =
+            error.response.data.message || "Login failed. Please try again.";
+          toast.error(errorMessage); 
+        } else {
+          toast.error("Login failed. Please try again.");
+      }
+    }
+      console.log(role);
+      
+      if(role === "Lawyer"){
+        router.push("/forms/lawyerform");
+      }
+      else if(role === "Prisoner"){
+        router.push("/forms/prisonerform");
+      }
+      
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage =
