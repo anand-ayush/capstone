@@ -10,6 +10,18 @@ const Header = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [role, setRole] = useState('');
+  
+  function getCookieValue(cookieName) {
+    const cookies = document.cookie.split('; '); // Split into individual cookies
+    for (const cookie of cookies) {
+        const [name, value] = cookie.split('='); // Split key and value
+        if (name === cookieName) {
+            return value; // Return the value of the matching cookie
+        }
+    }
+    return null; // Return null if the cookie is not found
+}
+
   const navbarToggleHandler = () => {
     setNavbarOpen(!navbarOpen);
   };
@@ -18,7 +30,11 @@ const Header = () => {
     if(document.cookie.includes('token')) {
       setUserLoggedIn(true);
       if(document.cookie.includes('role')) {
-        setRole(document.cookie.split('=')[1]);
+         let roless = getCookieValue('role');
+        
+         
+        setRole(roless);
+       
       }
     }
   }
@@ -170,43 +186,68 @@ const Header = () => {
               </div>
                 <div className="flex items-center justify-end pr-16 lg:pr-0">
                 {userLoggedIn ? (
-                  role === 'Lawyer' ? (
-                    <Link href="/lawyerprofile">
-                      <Image
-                        src="/images/hero/profile.png"
-                        alt="Profile Picture"
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                      />
-                    </Link>
-                  ) : (
-                    <Link href="/prisonprofile">
-                      <Image
-                        src="/images/hero/profile.png"
-                        alt="Profile Picture"
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                      />
-                    </Link>
-                  )
-                ) : (
-                  <>
-                  <Link
-                    href="/signin"
-                    className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-70 dark:text-white md:block"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="ease-in-up shadow-btn hover:shadow-btn-hover hidden rounded-sm bg-primary px-8 py-3 text-base font-medium text-white transition duration-300 hover:bg-opacity-90 md:block md:px-9 lg:px-6 xl:px-9"
-                  >
-                    Sign Up
-                  </Link>
-                  </>
-                )}
+                      role === "Lawyer" ? (
+                        <div className="flex items-center space-x-4">
+                          <Link href="/lawyerprofile">
+                            <Image
+                              src="/images/hero/profile.png"
+                              alt="Profile Picture"
+                              width={40}
+                              height={40}
+                              className="rounded-full"
+                            />
+                          </Link>
+                          <button
+                            onClick={() => {
+                              // Clear the token from cookies or local storage
+                              document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                              // Redirect the user (optional)
+                              window.location.href = "/signin";
+                            }}
+                            className="text-base font-medium text-red-600 hover:opacity-70"
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-4">
+                          <Link href="/prisonprofile">
+                            <Image
+                              src="/images/hero/profile.png"
+                              alt="Profile Picture"
+                              width={40}
+                              height={40}
+                              className="rounded-full"
+                            />
+                          </Link>
+                          <button
+                            onClick={() => {
+                              document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                              window.location.href = "/signin";
+                            }}
+                            className="text-base font-medium text-red-600 hover:opacity-70"
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      )
+                    ) : (
+                      <>
+                        <Link
+                          href="/signin"
+                          className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-70 dark:text-white md:block"
+                        >
+                          Sign In
+                        </Link>
+                        <Link
+                          href="/signup"
+                          className="ease-in-up shadow-btn hover:shadow-btn-hover hidden rounded-sm bg-primary px-8 py-3 text-base font-medium text-white transition duration-300 hover:bg-opacity-90 md:block md:px-9 lg:px-6 xl:px-9"
+                        >
+                          Sign Up
+                        </Link>
+                      </>
+                    )}
+
                 <div>
                   <ThemeToggler />
                 </div>

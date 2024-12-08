@@ -15,6 +15,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); 
@@ -37,6 +38,27 @@ export default function Login() {
         });
        
         document.cookie = `role=${response.data.user.role}; path=/`;
+
+        if(response.data.user.isformfilled === false){
+
+        
+            
+            if(response.data.user.role === "Lawyer" ){
+              router.push("/forms/lawyerform");
+            }
+            else if(response.data.user.role === "Prisoner"){
+              router.push("/forms/prisonerform");
+            }
+          }
+          else{
+          
+            if(response.data.user.role === "Lawyer" ){
+              router.push("/lawyerprofile");
+            }
+            else if(response.data.user.role === "Prisoner"){
+              router.push("/prisonerprofile");
+            }
+          }
         setRole(response.data.user.role);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -47,14 +69,7 @@ export default function Login() {
           toast.error("Login failed. Please try again.");
       }
     }
-      console.log(role);
       
-      if(role === "Lawyer"){
-        router.push("/forms/lawyerform");
-      }
-      else if(role === "Prisoner"){
-        router.push("/forms/prisonerform");
-      }
       
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

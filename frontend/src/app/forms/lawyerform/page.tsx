@@ -50,6 +50,18 @@ const lawyerForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="));
+ 
+  if (!token) {
+    toast.error("Token not found. Please log in again.");
+    return;
+  }
+ 
+  const tokenValue = token.split("=")[1];
+  console.log(tokenValue);
+  
 
     setIsSubmitting(true);
     if (
@@ -69,16 +81,7 @@ const lawyerForm = () => {
       return;
     }
     //  Token
- const token = document.cookie
-   .split("; ")
-   .find((row) => row.startsWith("token="));
-
- if (!token) {
-   toast.error("Token not found. Please log in again.");
-   return;
- }
-
- const tokenValue = token.split("=")[1];
+ 
 
     try {
       const res = await axios.post(
@@ -98,13 +101,15 @@ const lawyerForm = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${tokenValue}`,
           },
         },
       );
+      
       if (res.status === 201) {
         setProgress(25);
         toast.success("Application submitted successfully!...");
+        
         Router.push("/lawyerprofile");
       } else {
         toast.error("Unable to submit application. Please try again.");

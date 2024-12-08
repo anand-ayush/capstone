@@ -66,13 +66,14 @@ const menuData: Menu[] = [
         path: "/legalResources",
         newTab: false,
       },
-     
       {
-        id: 46,
-        title: "SignIn",
-        path: "/signin",
+        id: 45,
+        title: "Find Lawyer's",
+        path: "/lawyer",
         newTab: false,
-      },
+      }
+     
+     
     ],
   },
 ];
