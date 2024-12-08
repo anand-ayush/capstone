@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "../config";
 import bcrypt from "bcryptjs";
 import { prismaClient } from "../db";
+import ts from "typescript";
 
 
 const router = Router();
@@ -91,11 +92,22 @@ router.get("/me", authMiddleware, async (req: Request, res: Response) => {
       fullname: true,
       email: true,
       role: true,
+      
+      // @ts-ignore
+      isformfilled: true,
     },
   });
 
   return res.json({
     user,
+  });
+});
+
+//Logout
+
+router.post("/logout",async (req: Request, res: Response) => {
+  return res.json({
+    message: "Logged out",
   });
 });
 

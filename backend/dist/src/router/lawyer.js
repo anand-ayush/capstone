@@ -66,4 +66,30 @@ router.post("/lawyerform", middleware_1.authMiddleware, (req, res) => __awaiter(
         });
     }
 }));
+router.get("/me", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    if (!userId) {
+        return res.status(400).json({
+            message: "User ID is required to fetch lawyer records.",
+        });
+    }
+    try {
+        const lawyer = yield db_1.prismaClient.lawyer.findUnique({
+            where: {
+                userId,
+            },
+        });
+        return res.status(200).json({
+            message: "Lawyer data fetched successfully.",
+            lawyer,
+        });
+    }
+    catch (error) {
+        console.error("Error fetching lawyer data:", error.message, error.stack);
+        return res.status(500).json({
+            message: "An error occurred while fetching lawyer data.",
+        });
+    }
+}));
 exports.lawyerRouter = router;
