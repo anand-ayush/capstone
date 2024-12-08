@@ -42,6 +42,7 @@ model Prisoner {
   user                    User      @relation(fields: [userId], references: [id])
   relationships           PrisonerLawyer[]
   cases                   Case[]
+  contactRequests       ContactRequest[]  // New: Relation to ContactRequest
 }
 
 model Lawyer {
@@ -60,6 +61,7 @@ model Lawyer {
   user                    User      @relation(fields: [userId], references: [id])
   relationships         PrisonerLawyer[]
   cases                   Case[]
+  contactRequests      ContactRequest[]  // New: Relation to ContactRequest
 }
 
 model PrisonerLawyer {
@@ -102,3 +104,21 @@ model Case {
   prisoner      Prisoner           @relation(fields: [prisonerId], references: [id])
   lawyer        Lawyer             @relation(fields: [lawyerId], references: [id])
 }
+
+model ContactRequest {
+  id              Int       @id @default(autoincrement())
+  prisonerId      Int       // Linked to the prisoner initiating the request
+  lawyerId        Int       // Pre-filled based on the selected lawyer
+  caseDescription String    // Brief description of the prisoner's case or request
+  urgencyLevel    String     // e.g., "High", "Medium", "Low"
+  contactNo       Int   
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  prisoner        Prisoner   @relation(fields: [prisonerId], references: [id])
+  lawyer          Lawyer     @relation(fields: [lawyerId], references: [id])
+}
+
+
+// lawyerId: Automatically set based on the lawyer's profile the prisoner is viewing.
+// prisonerId: Retrieved from the logged-in user's session or profile.

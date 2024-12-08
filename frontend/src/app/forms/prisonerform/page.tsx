@@ -35,8 +35,6 @@ const prisonerForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  
-
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -73,10 +71,16 @@ const prisonerForm = () => {
       return;
     }
     //  Token
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      .split("=")[1];
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="));
+
+    if (!token) {
+      toast.error("Token not found. Please log in again.");
+      return;
+    }
+
+    const tokenValue = token.split("=")[1];
 
     try {
       const res = await axios.post(

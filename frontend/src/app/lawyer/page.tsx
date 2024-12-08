@@ -1,8 +1,18 @@
 'use client'; // Mark as Client Component
 
 import React, { useState } from "react";
+import {
+  FaSearch,
+  FaEnvelope,
+  FaPhone,
+  FaBriefcase,
+  FaCheckCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
-// Example data (this would ideally be fetched from an API or database)
+
+
 const lawyersData = [
     {
       name: "John Doe",
@@ -96,42 +106,96 @@ const lawyersData = [
     },
   ];
   
-const LawyerListing = () => {
+export default function LawyerListing (){
   const [searchTerm, setSearchTerm] = useState("");
 
+  const router = useRouter();
+
+  const handleContactClick = () => {
+    router.push("/addinfo");
+  };
+
   // Filter lawyers based on search term (name, email, or specialization)
-  const filteredLawyers = lawyersData.filter((lawyer) =>
-    lawyer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lawyer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lawyer.specializations.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredLawyers = lawyersData.filter(
+    (lawyer) =>
+      lawyer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lawyer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lawyer.specializations.toLowerCase().includes(searchTerm.toLowerCase()),
+);
 
   return (
-    <div className="container mx-auto p-4 bg-gray-900 text-white">
+    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 pt-24 text-white">
+      <div className="py-8 text-center">
+        <h1 className="text-4xl font-bold">
+          Find Your <span className="text-blue-500">Lawyer</span>
+        </h1>
+        <p className="mt-2 text-gray-400">
+          Search and contact the best lawyers for your needs
+        </p>
+      </div>
+
       {/* Search Bar */}
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search Lawyers..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div className="container mx-auto mb-8 px-4">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search Lawyers by name, email, or specialization..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full rounded-lg border border-gray-700 bg-gray-800 p-4 pl-12 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <FaSearch className="absolute left-4 top-4 text-gray-500" size={20} />
+        </div>
       </div>
 
       {/* Lawyer Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="container mx-auto grid grid-cols-1 gap-6 px-4 sm:grid-cols-2 lg:grid-cols-3">
         {filteredLawyers.map((lawyer, index) => (
-          <div key={index} className="bg-gray-800 shadow-md rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-2">{lawyer.name}</h3>
-            <p className="text-gray-400 text-sm mb-1">Email: {lawyer.email}</p>
-            <p className="text-gray-400 text-sm mb-1">Contact: {lawyer.contact}</p>
-            <p className="text-gray-400 text-sm mb-1">Bar Registration Number: {lawyer.barRegistrationNumber}</p>
-            <p className="text-gray-400 text-sm mb-1">Cases Solved: {lawyer.casesSolved}</p>
-            <p className="text-gray-400 text-sm mb-1">Specializations: {lawyer.specializations}</p>
-            <p className="text-gray-400 text-sm mb-3">Availability: {lawyer.availability}</p>
-            {/* Button to select or contact lawyer */}
-            <button className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <div
+            key={index}
+            className="transform rounded-lg bg-gray-800 p-6 shadow-md transition-transform hover:scale-105 hover:shadow-lg"
+          >
+            <h3 className="mb-2 text-xl font-semibold text-blue-400">
+              {lawyer.name}
+            </h3>
+            <p className="mb-1 flex items-center text-sm text-gray-400">
+              <FaEnvelope className="mr-2" /> {lawyer.email}
+            </p>
+            <p className="mb-1 flex items-center text-sm text-gray-400">
+              <FaPhone className="mr-2" /> {lawyer.contact}
+            </p>
+            <p className="mb-1 flex items-center text-sm text-gray-400">
+              <FaBriefcase className="mr-2" /> Bar Registration:{" "}
+              {lawyer.barRegistrationNumber}
+            </p>
+            <p className="mb-1 flex items-center text-sm text-gray-400">
+              <FaCheckCircle className="mr-2" /> Cases Solved:{" "}
+              {lawyer.casesSolved}
+            </p>
+            <p className="mb-1 text-sm text-gray-400">
+              Specializations: {lawyer.specializations}
+            </p>
+            <p
+              className={`mb-3 flex items-center text-sm ${
+                lawyer.availability === "Available"
+                  ? "text-green-400"
+                  : "text-red-400"
+              }`}
+            >
+              {lawyer.availability === "Available" ? (
+                <>
+                  <FaCheckCircle className="mr-2" /> Available
+                </>
+              ) : (
+                <>
+                  <FaTimesCircle className="mr-2" /> Unavailable
+                </>
+              )}
+            </p>
+            <button
+              className="w-full rounded-lg bg-blue-600 p-3 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onClick={handleContactClick}
+            >
               Contact Lawyer
             </button>
           </div>
@@ -140,5 +204,3 @@ const LawyerListing = () => {
     </div>
   );
 };
-
-export default LawyerListing;

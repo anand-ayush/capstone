@@ -68,10 +68,16 @@ const lawyerForm = () => {
       return;
     }
     //  Token
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      .split("=")[1];
+ const token = document.cookie
+   .split("; ")
+   .find((row) => row.startsWith("token="));
+
+ if (!token) {
+   toast.error("Token not found. Please log in again.");
+   return;
+ }
+
+ const tokenValue = token.split("=")[1];
 
     try {
       const res = await axios.post(
