@@ -60,6 +60,12 @@ const menuData: Menu[] = [
         path: "/about",
         newTab: false,
       },
+      {
+        id: 45,
+        title: "Legal Resources",
+        path: "/legalResources",
+        newTab: false,
+      },
      
       {
         id: 46,

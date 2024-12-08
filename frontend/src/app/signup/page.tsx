@@ -14,6 +14,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,8 +40,8 @@ export default function Signup() {
         },
       );
       if (res.status === 200) {
+        setProgress(25);
         toast.success("Signup successful! Redirecting...");
-        // Redirect based on the selected role
         router.push('/signin');
        
         
