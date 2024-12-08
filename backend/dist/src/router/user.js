@@ -88,10 +88,18 @@ router.get("/me", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, v
             fullname: true,
             email: true,
             role: true,
+            // @ts-ignore
+            isformfilled: true,
         },
     });
     return res.json({
         user,
+    });
+}));
+//Logout
+router.post("/logout", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    return res.json({
+        message: "Logged out",
     });
 }));
 exports.userRouter = router;

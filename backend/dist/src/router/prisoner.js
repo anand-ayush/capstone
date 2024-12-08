@@ -52,6 +52,23 @@ router.post("/prisonerform", middleware_1.authMiddleware, (req, res) => __awaite
                 userId: userId,
             },
         });
+        try {
+            yield db_1.prismaClient.user.update({
+                where: {
+                    id: userId,
+                },
+                data: {
+                    // @ts-ignore
+                    isformfilled: true,
+                },
+            });
+        }
+        catch (error) {
+            console.error("Error updating user role to lawyer:", error.message, error.stack);
+            return res.status(500).json({
+                message: "An error occurred while updating user role to lawyer.",
+            });
+        }
         return res.status(201).json({
             message: "Prisoner data submitted successfully.",
             prisoner,
@@ -66,6 +83,32 @@ router.post("/prisonerform", middleware_1.authMiddleware, (req, res) => __awaite
         }
         return res.status(500).json({
             message: "An error occurred while submitting prisoner data.",
+        });
+    }
+}));
+// Route to fetch prisoner data from the database
+router.get("/me", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    if (!userId) {
+        return res.status(400).json({
+            message: "User ID is required to fetch prisoner records.",
+        });
+    }
+    try {
+        const prisoner = yield db_1.prismaClient.prisoner.findUnique({
+            where: {
+                userId,
+            },
+        });
+        return res.json({
+            prisoner,
+        });
+    }
+    catch (error) {
+        console.error("Error fetching prisoner data:", error.message, error.stack);
+        return res.status(500).json({
+            message: "An error occurred while fetching prisoner data.",
         });
     }
 }));

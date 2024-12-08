@@ -34,6 +34,7 @@ router.post(
       });
     }
 
+
     try {
       const lawyer = await prismaClient.lawyer.create({
         data: {
@@ -54,6 +55,28 @@ router.post(
         },
       });
 
+      try {
+        await prismaClient.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            // @ts-ignore
+            isformfilled: true,
+          },
+        });
+      }
+      catch (error: any) {
+        console.error(
+          "Error updating user role to lawyer:",
+          error.message,
+          error.stack
+        );
+        return res.status(500).json({
+          message: "An error occurred while updating user role to lawyer.",
+        });
+      }
+
       return res.status(201).json({
         message: "Lawyer data submitted successfully.",
         lawyer,
@@ -70,5 +93,41 @@ router.post(
     }
   }
 );
+
+router.get(
+  "/me",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required to fetch lawyer records.",
+      });
+    }
+
+    try {
+      const lawyer = await prismaClient.lawyer.findUnique({
+        where: {
+          userId,
+        },
+      });
+
+      return res.status(200).json({
+        message: "Lawyer data fetched successfully.",
+        lawyer,
+      });
+    } catch (error: any) {
+      console.error(
+        "Error fetching lawyer data:",
+        error.message,
+        error.stack
+      );
+      return res.status(500).json({
+        message: "An error occurred while fetching lawyer data.",
+      });
+    }
+  }
+);
+
 
 export const lawyerRouter = router;

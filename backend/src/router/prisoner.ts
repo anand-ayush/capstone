@@ -52,6 +52,27 @@ router.post(
           userId: userId,
         },
       });
+      try {
+        await prismaClient.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            // @ts-ignore
+            isformfilled: true,
+          },
+        });
+      }
+      catch (error: any) {
+        console.error(
+          "Error updating user role to lawyer:",
+          error.message,
+          error.stack
+        );
+        return res.status(500).json({
+          message: "An error occurred while updating user role to lawyer.",
+        });
+      }
 
       return res.status(201).json({
         message: "Prisoner data submitted successfully.",
@@ -77,4 +98,40 @@ router.post(
   }
 );
 
+
+// Route to fetch prisoner data from the database
+
+router.get(
+  "/me",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required to fetch prisoner records.",
+      });
+    }
+
+    try {
+      const prisoner = await prismaClient.prisoner.findUnique({
+        where: {
+          userId,
+        },
+      });
+
+      return res.json({
+        prisoner,
+      });
+    } catch (error: any) {
+      console.error(
+        "Error fetching prisoner data:",
+        error.message,
+        error.stack
+      );
+      return res.status(500).json({
+        message: "An error occurred while fetching prisoner data.",
+      });
+    }
+  }
+);
 export const prisonRouter = router;
