@@ -9,6 +9,7 @@ import menuData from "./menuData";
 const Header = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [role, setRole] = useState('');
   const navbarToggleHandler = () => {
     setNavbarOpen(!navbarOpen);
   };
@@ -16,6 +17,9 @@ const Header = () => {
   const checkUserLoggedIn = () => {
     if(document.cookie.includes('token')) {
       setUserLoggedIn(true);
+      if(document.cookie.includes('role')) {
+        setRole(document.cookie.split('=')[1]);
+      }
     }
   }
 
@@ -166,15 +170,27 @@ const Header = () => {
               </div>
                 <div className="flex items-center justify-end pr-16 lg:pr-0">
                 {userLoggedIn ? (
-                    <Link href="/profile">
+                  role === 'Lawyer' ? (
+                    <Link href="/lawyerprofile">
                       <Image
-                      src="/images/hero/profile.png"
-                      alt="Profile Picture"
-                      width={40}
-                      height={40}
-                      className="rounded-full"
+                        src="/images/hero/profile.png"
+                        alt="Profile Picture"
+                        width={40}
+                        height={40}
+                        className="rounded-full"
                       />
                     </Link>
+                  ) : (
+                    <Link href="/prisonprofile">
+                      <Image
+                        src="/images/hero/profile.png"
+                        alt="Profile Picture"
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                    </Link>
+                  )
                 ) : (
                   <>
                   <Link
