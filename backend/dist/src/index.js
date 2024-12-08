@@ -25,6 +25,7 @@ app.use("/api/v1/forms", lawyer_1.lawyerRouter);
 // app.use("/api/v1/cases", caseRouter);
 app.use("/api/v1", reset_password_1.resetPasswordRouter);
 app.use("/api/v1/lawyer", lawyer_1.lawyerRouter);
+app.use("/api/v1/prisoner", prisoner_1.prisonRouter);
 const httpServer = (0, http_1.createServer)(app);
 const io = new socket_io_1.Server(httpServer, {
     cors: {

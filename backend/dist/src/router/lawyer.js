@@ -54,6 +54,23 @@ router.post("/lawyerform", middleware_1.authMiddleware, (req, res) => __awaiter(
                 userId: userId,
             },
         });
+        try {
+            yield db_1.prismaClient.user.update({
+                where: {
+                    id: userId,
+                },
+                data: {
+                    // @ts-ignore
+                    isformfilled: true,
+                },
+            });
+        }
+        catch (error) {
+            console.error("Error updating user role to lawyer:", error.message, error.stack);
+            return res.status(500).json({
+                message: "An error occurred while updating user role to lawyer.",
+            });
+        }
         return res.status(201).json({
             message: "Lawyer data submitted successfully.",
             lawyer,

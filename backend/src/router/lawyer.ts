@@ -34,6 +34,7 @@ router.post(
       });
     }
 
+
     try {
       const lawyer = await prismaClient.lawyer.create({
         data: {
@@ -53,6 +54,28 @@ router.post(
           userId: userId,
         },
       });
+
+      try {
+        await prismaClient.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            // @ts-ignore
+            isformfilled: true,
+          },
+        });
+      }
+      catch (error: any) {
+        console.error(
+          "Error updating user role to lawyer:",
+          error.message,
+          error.stack
+        );
+        return res.status(500).json({
+          message: "An error occurred while updating user role to lawyer.",
+        });
+      }
 
       return res.status(201).json({
         message: "Lawyer data submitted successfully.",

@@ -51,6 +51,7 @@ export default function Login() {
             }
           }
           else{
+          
             if(response.data.user.role === "Lawyer" ){
               router.push("/lawyerprofile");
             }

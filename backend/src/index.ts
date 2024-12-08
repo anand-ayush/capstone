@@ -23,6 +23,7 @@ app.use("/api/v1/forms", lawyerRouter);
 // app.use("/api/v1/cases", caseRouter);
 app.use("/api/v1", resetPasswordRouter);
 app.use("/api/v1/lawyer",lawyerRouter)
+app.use("/api/v1/prisoner",prisonRouter)
 
 
 const httpServer = createServer(app);
