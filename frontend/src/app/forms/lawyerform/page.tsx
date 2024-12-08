@@ -16,6 +16,7 @@ const fadeInUp = {
 };
 
 const lawyerForm = () => {
+  const Router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -98,6 +99,7 @@ const lawyerForm = () => {
       if (res.status === 201) {
         setProgress(25);
         toast.success("Application submitted successfully!...");
+        Router.push("/lawyerprofile");
       } else {
         toast.error("Unable to submit application. Please try again.");
       }
@@ -106,7 +108,7 @@ const lawyerForm = () => {
         error.response?.data?.message ||
         "Error during Application. Please try again.";
 
-      toast.error("Error during Application. Please try again");
+      toast.error("Error during Application. Please try again",errorMessage);
     } finally {
       setIsSubmitting(false);
     }

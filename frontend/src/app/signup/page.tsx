@@ -15,8 +15,6 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
-
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!fullname || !email || !password) {
@@ -43,12 +41,8 @@ export default function Signup() {
       if (res.status === 200) {
         toast.success("Signup successful! Redirecting...");
         // Redirect based on the selected role
-        if(role === "Lawyer"){
-          router.push("/forms/lawyerform");
-        }
-        else if(role === "Prisoner"){
-          router.push("/forms/prisonerform");
-        }
+        router.push('/signin');
+       
         
       } else {
         toast.error("Signup failed please fill all details & try again.");

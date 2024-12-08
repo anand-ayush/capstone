@@ -78,14 +78,16 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
         token: token,
     });
 }));
-router.get("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/me", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     // @ts-ignore
-    const id = req.id;
+    const id = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
     const user = yield db_1.prismaClient.user.findFirst({
         where: { id },
         select: {
             fullname: true,
             email: true,
+            role: true,
         },
     });
     return res.json({
